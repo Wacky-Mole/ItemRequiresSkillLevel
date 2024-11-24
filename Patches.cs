@@ -14,9 +14,9 @@ namespace ItemRequiresSkillLevel
         [HarmonyPatch]
         class ItemDropItemData
         {
-            [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetTooltip), new Type[] { })]
+            [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetTooltip), new Type[] { typeof(int) })]
             [HarmonyPostfix]
-            private static void GetToolTip(ItemDrop.ItemData __instance, ref string __result)
+            private static void GetToolTip(ItemDrop.ItemData __instance, int stackOverride, ref string __result)
             {
                 if (__instance.m_dropPrefab is null) return;
 
@@ -24,6 +24,7 @@ namespace ItemRequiresSkillLevel
                 if (requirement is null) return;
                 __result += GetTextEquip(requirement);
             }
+
 
             [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.IsEquipable))]
             [HarmonyPostfix]
@@ -91,9 +92,9 @@ namespace ItemRequiresSkillLevel
             internal static void UpdateRecipe_Post(ref InventoryGui __instance, Player player)
             {
                 if (__instance is null) return;
-                if (__instance.m_selectedRecipe.Key is null) return;
+                if (__instance.m_selectedRecipe.Recipe is null) return;
 
-                string name = __instance.m_selectedRecipe.Key.m_item.gameObject.name;
+                string name = __instance.m_selectedRecipe.Recipe.m_item.gameObject.name;
                 SkillRequirement requirement = RequirementService.list.FirstOrDefault(x => name.GetStableHashCode() == x.StableHashCode);
                 if (requirement is null) return;
 
