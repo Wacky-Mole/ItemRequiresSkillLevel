@@ -1,6 +1,6 @@
 {
     "name": "WackyItemRequiresSkillLevel",
-    "version_number": "1.3.1",
+    "version_number": "1.3.2",
     "website_url": "https://thunderstore.io/c/valheim/p/Detalhes/ItemRequiresSkillLevel/",
     "description": "Set your items to require skills or VLS attributes to be equipped or crafted.",
     "dependencies": [
