@@ -40,30 +40,42 @@ Yml will be generated in the first execution.
     Level: 10
     BlockCraft: false
     BlockEquip: true
-  - Skill: Blocking
+    EpicMMO: false
+    ExhibitionName: 
+  - Skill: Swim
     Level: 10
     BlockCraft: true
     BlockEquip: true
+    EpicMMO: false
+    ExhibitionName: 
 - PrefabName: ArmorBronzeChest
   Requirements:
   - Skill: Blocking
     Level: 10
     BlockCraft: false
     BlockEquip: true
-  - Skill: Blocking
+    EpicMMO: false
+    ExhibitionName: 
+  - Skill: Swim
     Level: 10
     BlockCraft: true
     BlockEquip: true
+    EpicMMO: false
+    ExhibitionName: 
 - PrefabName: HelmetBronze
   Requirements:
   - Skill: Blocking
     Level: 10
     BlockCraft: false
     BlockEquip: true
-  - Skill: Blocking
+    EpicMMO: false
+    ExhibitionName: 
+  - Skill: Swim
     Level: 10
     BlockCraft: true
     BlockEquip: true
+    EpicMMO: false
+    ExhibitionName: 
 
 ```
 
