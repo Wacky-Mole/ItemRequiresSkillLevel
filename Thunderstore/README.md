@@ -28,7 +28,7 @@ It has compatibility with Smoothbrain skills. (Some of them)
 
 </br>
 
-It has compatibility with WackyEpicMMO. Use these as skills: Strength, Dexterity, Intellect, Endurance, Vigour, Specializing, or EpicMMO Level. Set EpicMMO as attribute to true.
+It has compatibility with WackyEpicMMO. Use these as skills: Strength, Dexterity, Intellect, Endurance, Vigour, Specializing, or Level. Set EpicMMO as attribute to true.
 
 Yml will be generated in the first execution.
 
@@ -64,11 +64,11 @@ Yml will be generated in the first execution.
     ExhibitionName: 
 - PrefabName: HelmetBronze
   Requirements:
-  - Skill: Blocking
+  - Skill: Level // EpicMMO level 10
     Level: 10
     BlockCraft: false
     BlockEquip: true
-    EpicMMO: false
+    EpicMMO: true
     ExhibitionName: 
   - Skill: Swim
     Level: 10
