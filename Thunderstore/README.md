@@ -30,52 +30,165 @@ It has compatibility with Smoothbrain skills. (Some of them)
 
 It has compatibility with WackyEpicMMO. Use these as skills: Strength, Dexterity, Intellect, Endurance, Vigour, Specializing, or Level. Set EpicMMO as attribute to true.
 
-Yml will be generated in the first execution.
+A Yml will be generated in the first execution.
+
+![https://wackymole.com/hosts/itemrequiresskillexample.png](https://wackymole.com/hosts/itemrequiresskillexample.png)
+
+Example provided by LePunkQC
+
 
 # Example:
 ```
-- PrefabName: ArmorBronzeLegs
-  Requirements:
-  - Skill: Blocking
-    Level: 10
-    BlockCraft: false
-    BlockEquip: true
-    EpicMMO: false
-    ExhibitionName: 
-  - Skill: Swim
-    Level: 10
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: false
-    ExhibitionName: 
 - PrefabName: ArmorBronzeChest
   Requirements:
-  - Skill: Blocking
-    Level: 10
-    BlockCraft: false
-    BlockEquip: true
-    EpicMMO: false
-    ExhibitionName: 
-  - Skill: Swim
+  - Skill: Level
     Level: 10
     BlockCraft: true
     BlockEquip: true
-    EpicMMO: false
-    ExhibitionName: 
+    EpicMMO: true
+    ExhibitionName:
+  - Skill: Strength
+    Level: 20
+    BlockCraft: true
+    BlockEquip: true
+    EpicMMO: true
+    ExhibitionName:
+- PrefabName: ArmorBronzeLegs
+  Requirements:
+  - Skill: Level
+    Level: 10
+    BlockCraft: true
+    BlockEquip: true
+    EpicMMO: true
+    ExhibitionName:
+  - Skill: Strength
+    Level: 20
+    BlockCraft: true
+    BlockEquip: true
+    EpicMMO: true
+    ExhibitionName:
 - PrefabName: HelmetBronze
   Requirements:
-  - Skill: Level // EpicMMO level 10
+  - Skill: Level
     Level: 10
-    BlockCraft: false
+    BlockCraft: true
+    BlockEquip: true
+    EpicMMO: true
+    ExhibitionName:
+  - Skill: Strength
+    Level: 20
+    BlockCraft: true
+    BlockEquip: true
+    EpicMMO: true
+    ExhibitionName:
+- PrefabName: ArmorIronChest
+  Requirements:
+  - Skill: Level
+    Level: 20
+    BlockCraft: true
     BlockEquip: true
     EpicMMO: true
     ExhibitionName: 
-  - Skill: Swim
+  - Skill: Strength
+    Level: 40
+    BlockCraft: true
+    BlockEquip: true
+    EpicMMO: true
+    ExhibitionName:
+- PrefabName: ArmorIronLegs
+  Requirements:
+  - Skill: Level
+    Level: 20
+    BlockCraft: true
+    BlockEquip: true
+    EpicMMO: true
+    ExhibitionName: 
+  - Skill: Strength
+    Level: 40
+    BlockCraft: true
+    BlockEquip: true
+    EpicMMO: true
+    ExhibitionName: 
+- PrefabName: HelmetIron
+  Requirements:
+  - Skill: Level
+    Level: 20
+    BlockCraft: true
+    BlockEquip: true
+    EpicMMO: true
+    ExhibitionName: 
+  - Skill: Strength
+    Level: 40
+    BlockCraft: true
+    BlockEquip: true
+    EpicMMO: true
+    ExhibitionName:
+- PrefabName: AxeBronze
+  Requirements:
+  - Skill: Level
     Level: 10
     BlockCraft: true
     BlockEquip: true
-    EpicMMO: false
+    EpicMMO: true
     ExhibitionName: 
+- PrefabName: AtgeirBronze
+  Requirements:
+  - Skill: Level
+    Level: 10
+    BlockCraft: true
+    BlockEquip: true
+    EpicMMO: true
+    ExhibitionName: 
+- PrefabName: SwordBronze
+  Requirements:
+  - Skill: Level
+    Level: 10
+    BlockCraft: true
+    BlockEquip: true
+    EpicMMO: true
+    ExhibitionName: 
+- PrefabName: SwordIron
+  Requirements:
+  - Skill: Level
+    Level: 30
+    BlockCraft: true
+    BlockEquip: true
+    EpicMMO: true
+    ExhibitionName: 
+  - Skill: Swords
+    Level: 20
+    BlockCraft: true
+    BlockEquip: true
+    EpicMMO: true
+    ExhibitionName:
+- PrefabName: AxeIron
+  Requirements:
+  - Skill: Level
+    Level: 30
+    BlockCraft: true
+    BlockEquip: true
+    EpicMMO: true
+    ExhibitionName: 
+  - Skill: Axes
+    Level: 20
+    BlockCraft: true
+    BlockEquip: true
+    EpicMMO: true
+    ExhibitionName:
+- PrefabName: AtgeirIron
+  Requirements:
+  - Skill: Level
+    Level: 30
+    BlockCraft: true
+    BlockEquip: true
+    EpicMMO: true
+    ExhibitionName: 
+  - Skill: Swords
+    Level: 20
+    BlockCraft: true
+    BlockEquip: true
+    EpicMMO: true
+    ExhibitionName:
 
 ```
 
