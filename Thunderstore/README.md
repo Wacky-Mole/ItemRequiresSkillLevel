@@ -28,7 +28,8 @@ It has compatibility with Smoothbrain skills. (Some of them)
 
 </br>
 
-It has compatibility with WackyEpicMMO. Use these as skills: Strength, Dexterity, Intellect, Endurance, Vigour, Specializing, or Level. Set EpicMMO as attribute to true.
+It has compatibility with WackyEpicMMO. Use these as skills: Strength, Dexterity (Agility), Intellect, Endurance (Body), Vigour, Specializing (Special), or Level. Set EpicMMO as attribute to true.
+
 
 A Yml will be generated in the first execution.
 
