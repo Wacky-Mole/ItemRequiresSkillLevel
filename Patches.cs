@@ -9,7 +9,7 @@ namespace ItemRequiresSkillLevel
     [HarmonyPatch]
     class Patches
     {
-        static readonly List<string> ValheimLevelSystemList = new List<string> { "Intelligence", "Strength", "Focus", "Constitution", "Agility", "Level" };
+        static readonly List<string> ValheimLevelSystemList = new List<string> { "Intelligence", "Strength", "Focus", "Constitution", "Agility", "Level", "Magic",  "Diligence" };
 
         [HarmonyPatch]
         class ItemDropItemData

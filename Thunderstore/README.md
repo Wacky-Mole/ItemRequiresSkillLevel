@@ -2,7 +2,7 @@
 
 Original Mod by Detalhes https://thunderstore.io/c/valheim/p/Detalhes/ItemRequiresSkillLevel/
 
-Keeping it warm for Detalhes or maybe until Rusty adds WackyEpicMMO capabilities to his mod. 
+Keeping it warm for Detalhes.
 
 </br>
 
