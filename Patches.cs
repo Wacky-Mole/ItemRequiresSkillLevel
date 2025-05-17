@@ -119,6 +119,11 @@ namespace ItemRequiresSkillLevel
                 SkillRequirement requirement = RequirementService.list.FirstOrDefault(x => item.m_dropPrefab.name.GetStableHashCode() == x.StableHashCode);
                 if (requirement is null) return;
 
+
+                if (item.m_shared.m_food > 0f && !Player.m_localPlayer.CanEat(item, showMessages: true))
+                {
+                    return;
+                }
                 __result = requirement.Requirements.Where(x => x.BlockEquip).ToList().Any(x => !IsAble(x)) ? false : true;
             }
         }
@@ -214,7 +219,7 @@ namespace ItemRequiresSkillLevel
                 str += String.Format(ItemRequiresSkillLevel.RequiresText.Value, colorToUse, req.ExhibitionName, req.Level);
             }
 
-            return Localization.instance.Localize($"{str}");
+            return str;//Localization.instance.Localize($"{str}");
         }
 
         public static string GetTextEquip(SkillRequirement requirement)
@@ -233,7 +238,7 @@ namespace ItemRequiresSkillLevel
                 str += String.Format(ItemRequiresSkillLevel.RequiresText.Value, colorToUse, req.ExhibitionName, req.Level);
             }
 
-            return Localization.instance.Localize($"{str}");
+            return str;//Localization.instance.Localize($"{str}");
         }
     }
 }

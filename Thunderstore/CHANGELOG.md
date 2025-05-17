@@ -6,3 +6,4 @@
 | 1.3.3     | - Readme Update|
 | 1.3.4     | - Update for VLS mod|
 | 1.3.5     | - Update ServerSync |
+| 1.3.6     | - Update ServerSync </br> Fix for eating too much food. </br> Fix for ExhibitionName  |

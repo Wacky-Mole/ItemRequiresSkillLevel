@@ -14,7 +14,7 @@ namespace ItemRequiresSkillLevel
     [HarmonyPatch]
     public class ItemRequiresSkillLevel : BaseUnityPlugin
     {
-        public const string Version = "1.3.5";
+        public const string Version = "1.3.6";
         public const string PluginGUID = "Detalhes.ItemRequiresSkillLevel";
         static ConfigSync configSync = new ConfigSync(PluginGUID) { DisplayName = PluginGUID, CurrentVersion = Version, MinimumRequiredVersion = Version };
 
