@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using HarmonyLib;
 using ServerSync;
@@ -11,11 +12,13 @@ using UnityEngine;
 namespace ItemRequiresSkillLevel
 {
     [BepInPlugin(PluginGUID, PluginGUID, Version)]
+    [BepInDependency("com.orianaventure.mod.WorldAdvancementProgression", BepInDependency.DependencyFlags.SoftDependency)]
     [HarmonyPatch]
     public class ItemRequiresSkillLevel : BaseUnityPlugin
     {
-        public const string Version = "1.3.6";
-        public const string PluginGUID = "Detalhes.ItemRequiresSkillLevel";
+        public const string Version = "1.4.0";
+        public const string PluginGUIDold = "Detalhes.ItemRequiresSkillLevel";
+        public const string PluginGUID = "WackyMole.ItemRequiresSkillLevel";
         static ConfigSync configSync = new ConfigSync(PluginGUID) { DisplayName = PluginGUID, CurrentVersion = Version, MinimumRequiredVersion = Version };
 
         public static CustomSyncedValue<Dictionary<string, string>> YamlData = new CustomSyncedValue<Dictionary<string, string>>(configSync, "ItemRequiresSkillLevel yaml");
@@ -24,6 +27,10 @@ namespace ItemRequiresSkillLevel
         internal static ConfigEntry<string> RequiresText;
         internal static ConfigEntry<string> cantEquipColor;
         internal static ConfigEntry<string> canEquipColor;
+        public static bool IsWAPInstalled() =>
+               BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("com.orianaventure.mod.WorldAdvancementProgression");
+
+        public static bool hasWAP = false;
 
         Harmony _harmony = new Harmony(PluginGUID);
 
@@ -33,6 +40,7 @@ namespace ItemRequiresSkillLevel
 
         private void Awake()
         {
+            hasWAP = IsWAPInstalled();
             RequirementService.Init();
             _harmony.PatchAll();
             YamlData.ValueChanged += RequirementService.Load;
@@ -75,7 +83,44 @@ namespace ItemRequiresSkillLevel
 
             return configEntry;
         }
-
+      
         ConfigEntry<T> config<T>(string group, string name, T value, string description, bool synchronizedSetting = true) => config(group, name, value, new ConfigDescription(description), synchronizedSetting);
     }
 }
+
+
+/*
+ *  ItemRequiresSkillLevel.hasWAP
+if (ZoneSystem.instance.CheckKey("defeated_bonemass", GameKeyType.Player))
+{
+
+}
+//  Game.instance.GetPlayerProfile().m_knownWorldKeys.IncrementOrSet(text)
+// if (Game.instance.GetPlayerProfile().m_knownWorldKeys.TryGetValue("player" + __instance.m_dropPrefab.name, out var txt))
+// ZoneSyste.
+// 	private readonly HashSet<string> m_uniques = new HashSet<string>(); in Player
+
+
+ * ZoneSystem
+ * public bool CheckKey(string key, GameKeyType type = GameKeyType.Global, bool trueWhenKeySet = true)
+    {
+        switch (type)
+        {
+        case GameKeyType.Global:
+            return instance.GetGlobalKey(key) == trueWhenKeySet;
+        case GameKeyType.Player:
+            if ((bool)Player.m_localPlayer)
+            {
+                return Player.m_localPlayer.HaveUniqueKey(key) == trueWhenKeySet;
+            }
+            return false;
+        default:
+            ZLog.LogError("Unknown GameKeyType type");
+            return false;
+        }
+    }
+ * 
+ * 
+ * 
+ * 
+ */

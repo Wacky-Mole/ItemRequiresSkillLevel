@@ -2,7 +2,9 @@
 
 Original Mod by Detalhes https://thunderstore.io/c/valheim/p/Detalhes/ItemRequiresSkillLevel/
 
-Keeping it warm for Detalhes.
+Taking over for Detalhes with his permission.
+
+1.4.0 - Changed name to WackyMole.ItemRequiresSkillLevel.yml and cfg
 
 </br>
 

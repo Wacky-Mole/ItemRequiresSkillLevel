@@ -7,3 +7,4 @@
 | 1.3.4     | - Update for VLS mod|
 | 1.3.5     | - Update ServerSync |
 | 1.3.6     | - Update ServerSync </br> Fix for eating too much food. </br> Fix for ExhibitionName  |
+| 1.4.0     | - Changed Detalhes to WackyMole ItemRequiresSkillLevel, with full take over from Detalhes with his permission.

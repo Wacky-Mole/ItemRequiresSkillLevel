@@ -44,6 +44,7 @@ namespace ItemRequiresSkillLevel
         public bool BlockCraft { get; set; }
         public bool BlockEquip { get; set; }
         public bool EpicMMO { get; set; }
+        public string GlobalKeyReq { get; set; }
         public string ExhibitionName { get; set; }
     }
 

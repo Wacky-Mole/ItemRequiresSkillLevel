@@ -38,6 +38,7 @@ namespace ItemRequiresSkillLevel
                 bool result = requirement.Requirements.Where(x => x.BlockEquip).ToList().Any(x => !IsAble(x)) ? false : true;
 
                 __result = result;
+
             }
         }
 
@@ -161,6 +162,17 @@ namespace ItemRequiresSkillLevel
                 return true;
             }
 
+            if (!string.IsNullOrEmpty(requirement.GlobalKeyReq))
+            {
+                var scope = ItemRequiresSkillLevel.hasWAP ? GameKeyType.Global : GameKeyType.Player;
+
+                if (ZoneSystem.instance && ZoneSystem.instance.CheckKey(requirement.GlobalKeyReq, scope))
+                {
+                    return true;
+                }
+                else return false;
+            }
+
             if (ValheimLevelSystemList.Contains(requirement.Skill))
             {
                 if (!Player.m_localPlayer.m_knownTexts.TryGetValue("player" + requirement.Skill, out string txt))
@@ -185,6 +197,7 @@ namespace ItemRequiresSkillLevel
                      return false;
                 }
             }
+
 
             Skills.SkillType enumValue;
 
