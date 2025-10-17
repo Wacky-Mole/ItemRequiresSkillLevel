@@ -9,7 +9,25 @@ namespace ItemRequiresSkillLevel
     [HarmonyPatch]
     class Patches
     {
-        static readonly List<string> ValheimLevelSystemList = new List<string> { "Intelligence", "Strength", "Focus", "Constitution", "Agility", "Level", "Magic",  "Diligence" };
+        static readonly List<string> ValheimLevelSystemList = new List<string> { "Intelligence", "Strength", "Focus", "Constitution", "Agility", "Level", "Magic", "Diligence" };
+
+        private static bool TryGetReqForItem(ItemDrop.ItemData item, out SkillRequirement requirement)
+        {
+            requirement = null;
+            if (item?.m_dropPrefab == null) return false;
+            var hash = item.m_dropPrefab.name.GetStableHashCode();
+            requirement = RequirementService.list.FirstOrDefault(x => x.StableHashCode == hash);
+            return requirement != null;
+        }
+
+        private static bool TryGetReqForPrefabName(string prefabName, out SkillRequirement requirement)
+        {
+            requirement = null;
+            if (string.IsNullOrEmpty(prefabName)) return false;
+            var hash = prefabName.GetStableHashCode();
+            requirement = RequirementService.list.FirstOrDefault(x => x.StableHashCode == hash);
+            return requirement != null;
+        }
 
         [HarmonyPatch]
         class ItemDropItemData
@@ -18,27 +36,23 @@ namespace ItemRequiresSkillLevel
             [HarmonyPostfix]
             private static void GetToolTip(ItemDrop.ItemData __instance, int stackOverride, ref string __result)
             {
-                if (__instance.m_dropPrefab is null) return;
-
-                SkillRequirement requirement = RequirementService.list.FirstOrDefault(x => __instance.m_dropPrefab.name.GetStableHashCode() == x.StableHashCode);
-                if (requirement is null) return;
-                __result += GetTextEquip(requirement);
+                if (!TryGetReqForItem(__instance, out var requirement)) return;
+                __result += GetTextEquip(requirement); // append equip gate info (incl. GlobalKeyReq line)
             }
-
 
             [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.IsEquipable))]
             [HarmonyPostfix]
             private static void IsEquipable(ItemDrop.ItemData __instance, ref bool __result)
             {
-                if (__instance.m_dropPrefab is null) return;
+                if (!TryGetReqForItem(__instance, out var requirement)) return;
 
-                SkillRequirement requirement = RequirementService.list.FirstOrDefault(x => __instance.m_dropPrefab.name.GetStableHashCode() == x.StableHashCode);
-                if (requirement is null) return;
-
-                bool result = requirement.Requirements.Where(x => x.BlockEquip).ToList().Any(x => !IsAble(x)) ? false : true;
-
-                __result = result;
-
+                // If any BlockEquip requirement fails IsAble => not equipable
+                bool blocked = requirement.Requirements.Where(x => x.BlockEquip).Any(x => !IsAble(x));
+                if (blocked)
+                {
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.TopLeft, ItemRequiresSkillLevel.cantequipmessage.Value);
+                    __result = false;
+                }
             }
         }
 
@@ -50,13 +64,17 @@ namespace ItemRequiresSkillLevel
             internal static bool StartDraw(Humanoid character, ItemDrop.ItemData weapon)
             {
                 if (!character.IsPlayer()) return true;
-                if (string.IsNullOrEmpty(weapon.m_shared.m_ammoType)) return true;
+                if (string.IsNullOrEmpty(weapon?.m_shared?.m_ammoType)) return true;
 
-                if (character.m_ammoItem is not null && character.m_ammoItem.IsEquipable() && character.GetInventory().GetItem(character.m_ammoItem.m_shared.m_name) is not null)
+                // If player already has an acceptable equipped ammo item, allow
+                if (character.m_ammoItem is not null &&
+                    character.m_ammoItem.IsEquipable() &&
+                    character.GetInventory().GetItem(character.m_ammoItem.m_shared.m_name) is not null)
                 {
                     return true;
                 }
 
+                // Auto-pick compatible ammo that passes IsEquipable()
                 foreach (ItemDrop.ItemData item in character.GetInventory().m_inventory)
                 {
                     if (!item.IsEquipable()) continue;
@@ -79,7 +97,12 @@ namespace ItemRequiresSkillLevel
             {
                 if (!__instance.IsPlayer()) return true;
 
+                // Respect our IsEquipable() override (which considers skill + GlobalKeyReq)
                 if (item.IsEquipable()) return true;
+
+                // Optionally: message to user
+                if (__instance == Player.m_localPlayer)
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, ItemRequiresSkillLevel.cantequipmessage.Value);
 
                 return false;
             }
@@ -92,18 +115,18 @@ namespace ItemRequiresSkillLevel
             [HarmonyPostfix]
             internal static void UpdateRecipe_Post(ref InventoryGui __instance, Player player)
             {
-                if (__instance is null) return;
-                if (__instance.m_selectedRecipe.Recipe is null) return;
+                if (__instance == null) return;
+                var selected = __instance.m_selectedRecipe;
+                if (selected.Recipe == null || selected.Recipe.m_item == null) return;
 
-                string name = __instance.m_selectedRecipe.Recipe.m_item.gameObject.name;
-                SkillRequirement requirement = RequirementService.list.FirstOrDefault(x => name.GetStableHashCode() == x.StableHashCode);
-                if (requirement is null) return;
+                string prefabName = selected.Recipe.m_item.gameObject.name;
+                if (!TryGetReqForPrefabName(prefabName, out var requirement)) return;
 
-                string craftText = GetTextCraft(requirement);
+                string craftText = GetTextCraft(requirement); // includes key line + skill lines
                 __instance.m_recipeDecription.text += craftText;
 
-                bool result = requirement.Requirements.Where(x => x.BlockCraft).ToList().Any(x => !IsAble(x)) ? true : false;
-                if (result)
+                bool blockCraft = requirement.Requirements.Where(x => x.BlockCraft).Any(x => !IsAble(x));
+                if (blockCraft)
                 {
                     __instance.m_craftButton.interactable = false;
                 }
@@ -117,15 +140,16 @@ namespace ItemRequiresSkillLevel
             [HarmonyPostfix]
             internal static void CanConsumeItem(ItemDrop.ItemData item, ref bool __result)
             {
-                SkillRequirement requirement = RequirementService.list.FirstOrDefault(x => item.m_dropPrefab.name.GetStableHashCode() == x.StableHashCode);
-                if (requirement is null) return;
+                if (!TryGetReqForItem(item, out var requirement)) return;
 
-
-                if (item.m_shared.m_food > 0f && !Player.m_localPlayer.CanEat(item, showMessages: true))
+                // vanilla checks already ran; if food is edible state fails there, keep vanilla outcome
+                // apply our BlockEquip rules for consumables (your schema uses BlockEquip for use)
+                bool blockUse = requirement.Requirements.Where(x => x.BlockEquip).Any(x => !IsAble(x));
+                if (blockUse)
                 {
-                    return;
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.TopLeft, "Can't Consume: ");
+                    __result = false;
                 }
-                __result = requirement.Requirements.Where(x => x.BlockEquip).ToList().Any(x => !IsAble(x)) ? false : true;
             }
         }
 
@@ -133,6 +157,7 @@ namespace ItemRequiresSkillLevel
         class Spawn
         {
             static bool hasSpawned = false;
+
             [HarmonyPatch(typeof(Game), nameof(Game.RequestRespawn))]
             [HarmonyPostfix]
             internal static void RequestRespawn()
@@ -147,78 +172,72 @@ namespace ItemRequiresSkillLevel
             }
         }
 
+        // ------------------------------ CORE EVALUATOR ------------------------------
+
         public static bool IsAble(Requirement requirement)
         {
-
+            // EpicMMO attributes
             if (requirement.EpicMMO)
             {
                 int level = 0;
-
                 if (requirement.Skill == "Level") level = EpicMMOSystem_API.GetLevel();
                 else level = EpicMMOSystem_API.GetAttribute(requirement.Skill);
 
-                if (level < requirement.Level) return false;
-
-                return true;
+                return level >= requirement.Level;
             }
 
+            // Global / Player key
             if (!string.IsNullOrEmpty(requirement.GlobalKeyReq))
             {
                 var scope = ItemRequiresSkillLevel.hasWAP ? GameKeyType.Global : GameKeyType.Player;
-
                 if (ZoneSystem.instance && ZoneSystem.instance.CheckKey(requirement.GlobalKeyReq, scope))
-                {
                     return true;
-                }
-                else return false;
+                return false;
             }
 
+            // ValheimLevelSystem custom texts
             if (ValheimLevelSystemList.Contains(requirement.Skill))
             {
                 if (!Player.m_localPlayer.m_knownTexts.TryGetValue("player" + requirement.Skill, out string txt))
-                {
-                    return true;
-                }
+                    return true; // if not tracked, allow by default
 
-                if (Convert.ToInt32(txt) < requirement.Level) return false;
+                if (int.TryParse(txt, out var vlsLevel))
+                    return vlsLevel >= requirement.Level;
 
                 return true;
             }
 
-            var skill = Player.m_localPlayer.GetSkills().m_skillData.FirstOrDefault(x => x.Key == FromName(requirement.Skill));
-            if (skill.Value is null)
+            // Vanilla skills
+            var skillPair = Player.m_localPlayer.GetSkills().m_skillData
+                .FirstOrDefault(x => x.Key == FromName(requirement.Skill));
+
+            if (skillPair.Value is null)
             {
-                Skills.SkillType type;
-                if (Enum.TryParse(requirement.Skill, out type))
+                // try enum parse fallback (supports direct enum names in YAML)
+                if (Enum.TryParse(requirement.Skill, out Skills.SkillType parsed))
                 {
-                    skill = Player.m_localPlayer.GetSkills().m_skillData.FirstOrDefault(x => x.Key == type);
-                } else
+                    skillPair = Player.m_localPlayer.GetSkills().m_skillData.FirstOrDefault(x => x.Key == parsed);
+                }
+                else
                 {
-                     return false;
+                    // unknown skill name -> treat as unmet (safer)
+                    return false;
                 }
             }
 
+            // If still null, assume not learned yet; treat missing as 0 (fail if Level>0)
+            if (skillPair.Value is null) return requirement.Level <= 0;
 
-            Skills.SkillType enumValue;
-
-            if (Enum.TryParse(requirement.Skill, out enumValue))
-            {
-                if (skill.Value is null) return false;
-            }
-
-            if (skill.Value is null) return true;
-
-            if (skill.Value.m_level < requirement.Level) return false;
-
-            return true;
+            return skillPair.Value.m_level >= requirement.Level;
         }
 
         public static Skills.SkillType FromName(string englishName) => (Skills.SkillType)Math.Abs(englishName.GetStableHashCode());
 
+        // -------------- UI TEXT HELPERS (now show GlobalKeyReq too) --------------
 
         public static string GetTextCraft(SkillRequirement requirement)
         {
-            List<Requirement> requirements = requirement.Requirements.Where(x => x.BlockCraft).ToList();
+            var requirements = requirement.Requirements.Where(x => x.BlockCraft).ToList();
 
             string cantEquipColor = ItemRequiresSkillLevel.cantEquipColor.Value;
             string canEquipColor = ItemRequiresSkillLevel.canEquipColor.Value;
@@ -227,17 +246,26 @@ namespace ItemRequiresSkillLevel
 
             foreach (Requirement req in requirements)
             {
-                string colorToUse = cantEquipColor;
-                if (IsAble(req)) colorToUse = canEquipColor;
-                str += String.Format(ItemRequiresSkillLevel.RequiresText.Value, colorToUse, req.ExhibitionName, req.Level);
+                // Global key line (no level notion)
+                if (!string.IsNullOrWhiteSpace(req.GlobalKeyReq))
+                {
+                    bool ok = IsAble(req);
+                    string colorToUse = ok ? canEquipColor : cantEquipColor;
+                    str += $"\nRequires <color={colorToUse}>{req.GlobalKeyReq}</color>";
+                    continue; // if a key is specified, skip skill line for this entry
+                }
+
+                // Skill line
+                string color = IsAble(req) ? canEquipColor : cantEquipColor;
+                str += String.Format(ItemRequiresSkillLevel.RequiresText.Value, color, req.ExhibitionName, req.Level);
             }
 
-            return str;//Localization.instance.Localize($"{str}");
+            return str;
         }
 
         public static string GetTextEquip(SkillRequirement requirement)
         {
-            List<Requirement> requirements = requirement.Requirements.Where(x => x.BlockEquip).ToList();
+            var requirements = requirement.Requirements.Where(x => x.BlockEquip).ToList();
 
             string cantEquipColor = ItemRequiresSkillLevel.cantEquipColor.Value;
             string canEquipColor = ItemRequiresSkillLevel.canEquipColor.Value;
@@ -246,12 +274,21 @@ namespace ItemRequiresSkillLevel
 
             foreach (Requirement req in requirements)
             {
-                string colorToUse = cantEquipColor;
-                if (IsAble(req)) colorToUse = canEquipColor;
-                str += String.Format(ItemRequiresSkillLevel.RequiresText.Value, colorToUse, req.ExhibitionName, req.Level);
+                // Global key line
+                if (!string.IsNullOrWhiteSpace(req.GlobalKeyReq))
+                {
+                    bool ok = IsAble(req);
+                    string colorToUse = ok ? canEquipColor : cantEquipColor;
+                    str += $"\nRequires <color={colorToUse}>{req.GlobalKeyReq}</color>";
+                    continue;
+                }
+
+                // Skill line
+                string color = IsAble(req) ? canEquipColor : cantEquipColor;
+                str += String.Format(ItemRequiresSkillLevel.RequiresText.Value, color, req.ExhibitionName, req.Level);
             }
 
-            return str;//Localization.instance.Localize($"{str}");
+            return str;
         }
     }
 }

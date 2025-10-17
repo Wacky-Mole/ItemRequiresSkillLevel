@@ -1,43 +1,46 @@
 ## ItemRequiresSkillLevel by WackyMole
 
-Original Mod by Detalhes https://thunderstore.io/c/valheim/p/Detalhes/ItemRequiresSkillLevel/
+Original mod by **Detalhes**: [https://thunderstore.io/c/valheim/p/Detalhes/ItemRequiresSkillLevel/](https://thunderstore.io/c/valheim/p/Detalhes/ItemRequiresSkillLevel/)
+Maintained by **WackyMole** with permission.
 
-Taking over for Detalhes with his permission.
+**What’s new in 1.4.0**
 
-1.4.0 - Changed name to WackyMole.ItemRequiresSkillLevel.yml and cfg
+* Config renamed to **`WackyMole.ItemRequiresSkillLevel.yml`** (still reads legacy `Detalhes.ItemRequiresSkillLevel.yml` if present).
+* Added **`GlobalKeyReq`**: gate crafting/equipping by world/player keys.
+  If World Advancement Progression (WAP) is installed, keys are checked **globally**; (because WAP makes them private)
+  otherwise they’re checked against the **player**. Private player raids World Modifier is recommended regardless.
+      </br> WAP mod and it's private keys are recommended for a better experience.
 
-</br>
+**What it does**
 
+* Create skill requirements for **any equipable item**.
+* Optionally **block crafting** based on skills or keys.
+* Blocks **foods and potions** when requirements aren’t met.
+* Generates a **YAML** on first run.
+* Vanilla skills reference: [https://valheim.fandom.com/wiki/Skills](https://valheim.fandom.com/wiki/Skills)
 
-Create skill requirement for any equipable item that you want.  
+**Compatibility**
 
-List of vanilla skills. https://valheim.fandom.com/wiki/Skills
+* **Valheim Level System (VLS):** `Intelligence, Strength, Focus, Constitution, Agility, Level`
+* **Smoothbrain Skills:** partial support (some skills)
+* **WackyEpicMMO:** use `Strength, Dexterity (Agility), Intellect, Endurance (Body), Vigour, Specializing (Special), Level` and set `EpicMMO: true`
 
-Block craft based on skills if you want
+Legacy Detalhes mod (still somewhat maintained):
+[https://www.nexusmods.com/valheim/mods/2797?tab=description](https://www.nexusmods.com/valheim/mods/2797?tab=description)
 
-Blocks foods and potions.
+![Example](https://wackymole.com/hosts/itemrequiresskillexample.png)
+*Example provided by LePunkQC*
 
-</br>
-It has compatibility with Valheim Level System. Use these as skills: Intelligence, Strength, Focus, Constitution, Agility, Level 
+How keys are checked (scope)
 
-Old Detalhes mod (still kinda maintained)
+With WAP installed: checked as Global world keys.
 
-https://www.nexusmods.com/valheim/mods/2797?tab=description
-
-</br>
-
-It has compatibility with Smoothbrain skills. (Some of them)
-
-</br>
-
-It has compatibility with WackyEpicMMO. Use these as skills: Strength, Dexterity (Agility), Intellect, Endurance (Body), Vigour, Specializing (Special), or Level. Set EpicMMO as attribute to true.
+Without WAP: checked against the Player (private keys).
+Private player raids World Modifier is recommended either way.
 
 
 A Yml will be generated in the first execution.
 
-![https://wackymole.com/hosts/itemrequiresskillexample.png](https://wackymole.com/hosts/itemrequiresskillexample.png)
-
-Example provided by LePunkQC
 
 
 # Example:
@@ -126,6 +129,10 @@ Example provided by LePunkQC
     BlockEquip: true
     EpicMMO: true
     ExhibitionName:
+  - GlobalKeyReq: defeated_bonemass
+    BlockEquip: true
+  - GlobalKeyReq: defeated_gdking
+    BlockEquip: true
 - PrefabName: AxeBronze
   Requirements:
   - Skill: Level
@@ -144,12 +151,8 @@ Example provided by LePunkQC
     ExhibitionName: 
 - PrefabName: SwordBronze
   Requirements:
-  - Skill: Level
-    Level: 10
-    BlockCraft: true
+  - GlobalKeyReq: defeated_eikthyr
     BlockEquip: true
-    EpicMMO: true
-    ExhibitionName: 
 - PrefabName: SwordIron
   Requirements:
   - Skill: Level
@@ -198,3 +201,16 @@ Example provided by LePunkQC
 # Sync
 Install in the server to sync config with clients.
 
+# GlobalKeys Available
+
+    defeated_bonemass — Set when killing Bonemass
+    defeated_gdking — Set when killing The Elder
+    defeated_goblinking — Set when killing Yagluth
+    defeated_dragon — Set when killing Moder
+    defeated_eikthyr — Set when killing Eikthyr
+    defeated_queen — Set when killing The Queen
+    defeated_fader — Set when killing Fader
+    defeated_serpent — Set when killing a Serpent
+    KilledTroll — Set when killing a Troll
+    killed_surtling — Set when killing a Surtling
+    KilledBat — Set when killing a Bat

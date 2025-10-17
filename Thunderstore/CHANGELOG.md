@@ -1,10 +1,11 @@
-| `Version` | `Update Notes`    |
-|-----------|-------------------|
-| 1.3.0     | - Wacky Initial Release |
-| 1.3.1     | - Readme Update |
-| 1.3.2     | - Might as well update ServerSync too |
-| 1.3.3     | - Readme Update|
-| 1.3.4     | - Update for VLS mod|
-| 1.3.5     | - Update ServerSync |
-| 1.3.6     | - Update ServerSync </br> Fix for eating too much food. </br> Fix for ExhibitionName  |
-| 1.4.0     | - Changed Detalhes to WackyMole ItemRequiresSkillLevel, with full take over from Detalhes with his permission.
+
+| Version | Update Notes                                                                                                                                                                                                                                                                                 |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.3.0   | Initial release.                                                                                                                                                                                                                                                                             |
+| 1.3.1   | README update.                                                                                                                                                                                                                                                                               |
+| 1.3.2   | ServerSync update.                                                                                                                                                                                                                                                                           |
+| 1.3.3   | README update.                                                                                                                                                                                                                                                                               |
+| 1.3.4   | Support for Valheim Level System (VLS).                                                                                                                                                                                                                                                      |
+| 1.3.5   | ServerSync update.                                                                                                                                                                                                                                                                           |
+| 1.3.6   | ServerSync update.<br>Fixed “eating too much food” issue.<br>Fixed `ExhibitionName` handling.                                                                                                                                                                                                |
+| 1.4.0   | Switched config to `WackyMole.ItemRequiresSkillLevel.yml` (still reads legacy `Detalhes.ItemRequiresSkillLevel.yml` if present).<br>Added `GlobalKeyReq` to requirements to gate items by global keys (recommended with World Advancement Progression or with private player raids enabled). |

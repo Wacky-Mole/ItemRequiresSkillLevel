@@ -122,6 +122,70 @@ namespace ItemRequiresSkillLevel
 
                 });
 
+                // --- NEW: GlobalKeyReq examples --------------------------------------
+
+
+                // 2) Gate EQUIP only (can craft early), after Eikthyr
+                initials.Add(new SkillRequirement
+                {
+                    PrefabName = "SwordBronze",
+                    Requirements = new List<Requirement>() {
+                new Requirement {
+                    GlobalKeyReq = "defeated_eikthyr",
+                    BlockEquip   = true,
+                    ExhibitionName = "Eikthyr Defeated"
+                }
+                 }
+                });
+
+                // 3) Gate CRAFT only (can equip if looted), after The Elder
+                initials.Add(new SkillRequirement
+                {
+                    PrefabName = "AtgeirIron",
+                    Requirements = new List<Requirement>() {
+                new Requirement {
+                    GlobalKeyReq = "defeated_gdking",
+                    BlockCraft   = true,
+                    ExhibitionName = "The Elder Defeated"
+                }
+                 }
+                });
+
+                // 4) Combine skill + key (both must pass) for Iron Chest
+                initials.Add(new SkillRequirement
+                {
+                    PrefabName = "ArmorIronChest",
+                    Requirements = new List<Requirement>() {
+                new Requirement {
+                    Skill       = "Level",   // EpicMMO example
+                    Level       = 20,
+                    EpicMMO     = true,
+                    BlockCraft  = true,
+                    BlockEquip  = true,
+                    ExhibitionName = "Player Level"
+                },
+                new Requirement {
+                    GlobalKeyReq = "defeated_dragon", // Moder
+                    BlockCraft   = true,
+                    BlockEquip   = true,
+                    ExhibitionName = "Moder Defeated"
+                }
+                    }
+                });
+
+                // 5) Consumable: block using Serpent Stew until a Serpent has been killed
+                initials.Add(new SkillRequirement
+                {
+                    PrefabName = "SerpentStew",
+                    Requirements = new List<Requirement>() {
+                new Requirement {
+                    GlobalKeyReq = "defeated_serpent",
+                    BlockEquip   = true, // for consumables, use BlockEquip to gate use
+                    ExhibitionName = "Serpent Killed"
+                }
+                    }
+                });
+
                 var serializer = new SerializerBuilder()
                 .WithNamingConvention(PascalCaseNamingConvention.Instance)
                 .Build();
