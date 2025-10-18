@@ -3,28 +3,29 @@
 Original mod by **Detalhes**: [https://thunderstore.io/c/valheim/p/Detalhes/ItemRequiresSkillLevel/](https://thunderstore.io/c/valheim/p/Detalhes/ItemRequiresSkillLevel/)
 Maintained by **WackyMole** with permission.
 
-**What’s new in 1.4.0**
+### What's new in 1.4.0
 
-* Config renamed to **`WackyMole.ItemRequiresSkillLevel.yml`** (still reads legacy `Detalhes.ItemRequiresSkillLevel.yml` if present).
-* Added **`GlobalKeyReq`**: gate crafting/equipping by world/player keys.
-  If World Advancement Progression (WAP) is installed, keys are checked **globally**; (because WAP makes them private)
-  otherwise they’re checked against the **player**. **Private Player Raids World Modifier** is recommended regardless.
-      </br> WAP mod and it's private keys are recommended for a better experience.
-      </br>   </br>You can use short lines like: </br>
-    GlobalKeyReq: defeated_bonemass</br>
-    BlockEquip: true
+* Config renamed to `WackyMole.ItemRequiresSkillLevel.yml` (still reads legacy `Detalhes.ItemRequiresSkillLevel.yml` if present).
+* Added `GlobalKeyReq`: gate crafting/equipping by world/player keys.
+  If World Advancement Progression (WAP) is installed, keys are checked **globally** (WAP makes them private). Otherwise they are checked against the **player**. The **Private Player Raids** world modifier is recommended either way.
+  You can use short lines like:
 
-    **Make Sure to enable Private Player Raids if you use globalKeyReq**
+  ```yaml
+  GlobalKeyReq: defeated_bonemass
+  BlockEquip: true
+  ```
 
-**What it does**
+  **Make sure to enable Private Player Raids if you use `GlobalKeyReq`.**
+
+### What it does
 
 * Create skill requirements for **any equipable item**.
 * Optionally **block crafting** based on skills or keys.
-* Blocks **foods and potions** when requirements aren’t met.
+* Blocks **foods and potions** when requirements are not met.
 * Generates a **YAML** on first run.
 * Vanilla skills reference: [https://valheim.fandom.com/wiki/Skills](https://valheim.fandom.com/wiki/Skills)
 
-**Compatibility**
+### Compatibility
 
 * **Valheim Level System (VLS):** `Intelligence, Strength, Focus, Constitution, Agility, Level`
 * **Smoothbrain Skills:** partial support (some skills)
@@ -36,12 +37,12 @@ Legacy Detalhes mod (still somewhat maintained):
 ![Example](https://wackymole.com/hosts/itemrequiresskillexample.png)
 *Example provided by LePunkQC*
 
-How keys are checked (scope)
+### How keys are checked (scope)
 
-With WAP installed: checked as Global world keys.
+* With WAP installed: checked as **Global** world keys.
+* Without WAP: checked against the **Player** (private keys).
+  Private Player Raids world modifier is recommended either way.
 
-Without WAP: checked against the Player (private keys).
-Private player raids World Modifier is recommended either way.
 
 
 A Yml will be generated in the first execution.
@@ -208,14 +209,14 @@ Install in the server to sync config with clients.
 
 # GlobalKeys Available
 
-    defeated_bonemass — Set when killing Bonemass
-    defeated_gdking — Set when killing The Elder
-    defeated_goblinking — Set when killing Yagluth
-    defeated_dragon — Set when killing Moder
-    defeated_eikthyr — Set when killing Eikthyr
-    defeated_queen — Set when killing The Queen
-    defeated_fader — Set when killing Fader
-    defeated_serpent — Set when killing a Serpent
-    KilledTroll — Set when killing a Troll
-    killed_surtling — Set when killing a Surtling
-    KilledBat — Set when killing a Bat
+    defeated_bonemass - Set when killing Bonemass
+    defeated_gdking - Set when killing The Elder
+    defeated_goblinking - Set when killing Yagluth
+    defeated_dragon - Set when killing Moder
+    defeated_eikthyr - Set when killing Eikthyr
+    defeated_queen - Set when killing The Queen
+    defeated_fader - Set when killing Fader
+    defeated_serpent - Set when killing a Serpent
+    KilledTroll - Set when killing a Troll
+    killed_surtling - Set when killing a Surtling
+    KilledBat - Set when killing a Bat

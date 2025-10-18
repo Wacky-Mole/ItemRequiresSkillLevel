@@ -27,7 +27,9 @@ namespace ItemRequiresSkillLevel
                 skillRequirement.StableHashCode = skillRequirement.PrefabName.GetStableHashCode();
                 foreach (var x in skillRequirement.Requirements)
                 {
-                    if (string.IsNullOrEmpty(x.ExhibitionName)) x.ExhibitionName = x.Skill;
+                    if (string.IsNullOrEmpty(x.ExhibitionName))
+                        x.ExhibitionName = string.IsNullOrEmpty(x.GlobalKeyReq) ? x.Skill : x.GlobalKeyReq;
+
                 }
             }
 

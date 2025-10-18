@@ -241,56 +241,50 @@ namespace ItemRequiresSkillLevel
         public static string GetTextCraft(SkillRequirement requirement)
         {
             var requirements = requirement.Requirements.Where(x => x.BlockCraft).ToList();
-
-            string cantEquipColor = ItemRequiresSkillLevel.cantEquipColor.Value;
-            string canEquipColor = ItemRequiresSkillLevel.canEquipColor.Value;
+            string cant = ItemRequiresSkillLevel.cantEquipColor.Value;
+            string can = ItemRequiresSkillLevel.canEquipColor.Value;
 
             string str = "";
-
-            foreach (Requirement req in requirements)
+            foreach (var req in requirements)
             {
-                // Global key line (no level notion)
+                bool ok = IsAble(req);
+                string color = ok ? can : cant;
+
                 if (!string.IsNullOrWhiteSpace(req.GlobalKeyReq))
                 {
-                    bool ok = IsAble(req);
-                    string colorToUse = ok ? canEquipColor : cantEquipColor;
-                    str += $"\nRequires <color={colorToUse}>{req.GlobalKeyReq}</color>";
-                    continue; // if a key is specified, skip skill line for this entry
+                    var label = string.IsNullOrWhiteSpace(req.ExhibitionName) ? req.GlobalKeyReq : req.ExhibitionName;
+                    str += $"\nRequires <color={color}>{label}</color>";
+                    continue;
                 }
 
-                // Skill line
-                string color = IsAble(req) ? canEquipColor : cantEquipColor;
-                str += String.Format(ItemRequiresSkillLevel.RequiresText.Value, color, req.ExhibitionName, req.Level);
+                string labelSkill = string.IsNullOrWhiteSpace(req.ExhibitionName) ? req.Skill : req.ExhibitionName;
+                str += string.Format(ItemRequiresSkillLevel.RequiresText.Value, color, labelSkill, req.Level);
             }
-
             return str;
         }
 
         public static string GetTextEquip(SkillRequirement requirement)
         {
             var requirements = requirement.Requirements.Where(x => x.BlockEquip).ToList();
-
-            string cantEquipColor = ItemRequiresSkillLevel.cantEquipColor.Value;
-            string canEquipColor = ItemRequiresSkillLevel.canEquipColor.Value;
+            string cant = ItemRequiresSkillLevel.cantEquipColor.Value;
+            string can = ItemRequiresSkillLevel.canEquipColor.Value;
 
             string str = "";
-
-            foreach (Requirement req in requirements)
+            foreach (var req in requirements)
             {
-                // Global key line
+                bool ok = IsAble(req);
+                string color = ok ? can : cant;
+
                 if (!string.IsNullOrWhiteSpace(req.GlobalKeyReq))
                 {
-                    bool ok = IsAble(req);
-                    string colorToUse = ok ? canEquipColor : cantEquipColor;
-                    str += $"\nRequires <color={colorToUse}>{req.GlobalKeyReq}</color>";
+                    var label = string.IsNullOrWhiteSpace(req.ExhibitionName) ? req.GlobalKeyReq : req.ExhibitionName;
+                    str += $"\nRequires <color={color}>{label}</color>";
                     continue;
                 }
 
-                // Skill line
-                string color = IsAble(req) ? canEquipColor : cantEquipColor;
-                str += String.Format(ItemRequiresSkillLevel.RequiresText.Value, color, req.ExhibitionName, req.Level);
+                string labelSkill = string.IsNullOrWhiteSpace(req.ExhibitionName) ? req.Skill : req.ExhibitionName;
+                str += string.Format(ItemRequiresSkillLevel.RequiresText.Value, color, labelSkill, req.Level);
             }
-
             return str;
         }
     }
