@@ -31,6 +31,9 @@ namespace ItemRequiresSkillLevel
         internal static ConfigEntry<string> cantEquipColor;
         internal static ConfigEntry<string> canEquipColor;
         internal static ConfigEntry<string> cantequipmessage;
+        internal static ConfigEntry<string> canteatmessage;
+        internal static ConfigEntry<string> cantUseAmmomessage;
+        internal static ConfigEntry<bool> ShowBlockMessages;
 
         public static bool IsWAPInstalled() =>
             Chainloader.PluginInfos.ContainsKey("com.orianaventure.mod.WorldAdvancementProgression");
@@ -88,7 +91,10 @@ namespace ItemRequiresSkillLevel
             cantEquipColor = config("General", "cantEquipColor", "red", "cantEquipColor");
             GenerateListWithAllEquipableItems = config("General", "GenerateListWithAllEquipableItems", false, "GenerateListWithAllEquipableItems");
             RequiresText = config("General", "RequiresText", "\nRequires <color={0}>{1} {2}</color>", "RequiresText");
-            cantequipmessage = config("General", "CantEquitMessage", "You Can't Equip this!", "Message to display when a player can't equip and item");
+            cantequipmessage = config("General", "CantEquitMessage", "You Can't Equip this!", "Message to display when a player can't equip and item.");
+            canteatmessage = config("General", "CantConsumeMessage", "You Can't Consume this!", "Message to display when a player can't eat an item.");
+            cantUseAmmomessage = config("General", "CantUseAmmoMessage", "You Can't Use This Ammo", "Message to display when a player can't use an ammo type.");
+            ShowBlockMessages = config("General", "ShowBlockMessages", true, "Show Block Messages to Users, Not ServerSynced", false);
 
             configSync.AddLockingConfigEntry(serverSyncLock);
         }

@@ -8,8 +8,13 @@ Maintained by **WackyMole** with permission.
 * Config renamed to **`WackyMole.ItemRequiresSkillLevel.yml`** (still reads legacy `Detalhes.ItemRequiresSkillLevel.yml` if present).
 * Added **`GlobalKeyReq`**: gate crafting/equipping by world/player keys.
   If World Advancement Progression (WAP) is installed, keys are checked **globally**; (because WAP makes them private)
-  otherwise they’re checked against the **player**. Private player raids World Modifier is recommended regardless.
+  otherwise they’re checked against the **player**. **Private Player Raids World Modifier** is recommended regardless.
       </br> WAP mod and it's private keys are recommended for a better experience.
+      </br>   </br>You can use short lines like: </br>
+    GlobalKeyReq: defeated_bonemass</br>
+    BlockEquip: true
+
+    **Make Sure to enable Private Player Raids if you use globalKeyReq**
 
 **What it does**
 

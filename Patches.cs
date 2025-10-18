@@ -50,7 +50,8 @@ namespace ItemRequiresSkillLevel
                 bool blocked = requirement.Requirements.Where(x => x.BlockEquip).Any(x => !IsAble(x));
                 if (blocked)
                 {
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.TopLeft, ItemRequiresSkillLevel.cantequipmessage.Value);
+                    if ( ItemRequiresSkillLevel.ShowBlockMessages.Value)
+                        MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, ItemRequiresSkillLevel.cantequipmessage.Value);
                     __result = false;
                 }
             }
@@ -83,7 +84,8 @@ namespace ItemRequiresSkillLevel
                     character.m_ammoItem = item;
                     return true;
                 }
-
+                if ( ItemRequiresSkillLevel.ShowBlockMessages.Value)
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, ItemRequiresSkillLevel.cantUseAmmomessage.Value);
                 return false;
             }
         }
@@ -101,8 +103,8 @@ namespace ItemRequiresSkillLevel
                 if (item.IsEquipable()) return true;
 
                 // Optionally: message to user
-                if (__instance == Player.m_localPlayer)
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, ItemRequiresSkillLevel.cantequipmessage.Value);
+                if (__instance == Player.m_localPlayer  && ItemRequiresSkillLevel.ShowBlockMessages.Value)
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, ItemRequiresSkillLevel.cantequipmessage.Value);                
 
                 return false;
             }
@@ -147,7 +149,8 @@ namespace ItemRequiresSkillLevel
                 bool blockUse = requirement.Requirements.Where(x => x.BlockEquip).Any(x => !IsAble(x));
                 if (blockUse)
                 {
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.TopLeft, "Can't Consume: ");
+                    if (ItemRequiresSkillLevel.ShowBlockMessages.Value)
+                        MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, ItemRequiresSkillLevel.canteatmessage.Value);
                     __result = false;
                 }
             }
@@ -160,7 +163,7 @@ namespace ItemRequiresSkillLevel
 
             [HarmonyPatch(typeof(Game), nameof(Game.RequestRespawn))]
             [HarmonyPostfix]
-            internal static void RequestRespawn()
+            internal static void RequestRespawnItemRequires()
             {
                 if (hasSpawned) return;
 
