@@ -17,7 +17,7 @@ namespace ItemRequiresSkillLevel
     [HarmonyPatch]
     public class ItemRequiresSkillLevel : BaseUnityPlugin
     {
-        public const string Version = "1.4.0";
+        public const string Version = "1.4.1";
         public const string PluginGUIDold = "Detalhes.ItemRequiresSkillLevel";
         public const string PluginGUID = "WackyMole.ItemRequiresSkillLevel";
         public const string PluginName = "ItemRequiresSkillLevel";

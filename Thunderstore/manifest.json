@@ -1,6 +1,6 @@
 {
   "name": "WackyItemRequiresSkillLevel",
-  "version_number": "1.4.0",
+  "version_number": "1.4.1",
   "website_url": "https://github.com/Wacky-Mole/ItemRequiresSkillLevel",
   "description": "Set your items to require skills or VLS attributes to be equipped or crafted.",
   "dependencies": [

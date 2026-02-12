@@ -10,13 +10,13 @@ namespace ItemRequiresSkillLevel
 {
     public class SkillRequirement
     {
-        [YamlMember]
+        [YamlMember(Alias = "PrefabName")]
         public string PrefabName { get; set; }
 
         [YamlIgnore]
         public int StableHashCode { get; set; }
 
-        [YamlMember]
+        [YamlMember(Alias = "Requirements")]
         public List<Requirement> Requirements { get; set; }
 
         public static List<SkillRequirement> Parse(string yaml)
@@ -36,17 +36,28 @@ namespace ItemRequiresSkillLevel
             return list;
         }
 
-        private static List<SkillRequirement> ParseString(string yaml) => new DeserializerBuilder().IgnoreFields().Build().Deserialize<List<SkillRequirement>>(yaml);
+        private static List<SkillRequirement> ParseString(string yaml) => new DeserializerBuilder()
+            .WithNamingConvention(PascalCaseNamingConvention.Instance)
+            .IgnoreFields()
+            .Build()
+            .Deserialize<List<SkillRequirement>>(yaml);
     }
 
     public class Requirement
     {
+        [YamlMember(Alias = "Skill")]
         public string Skill { get; set; }
+        [YamlMember(Alias = "Level")]
         public int Level { get; set; }
+        [YamlMember(Alias = "BlockCraft")]
         public bool BlockCraft { get; set; }
+        [YamlMember(Alias = "BlockEquip")]
         public bool BlockEquip { get; set; }
+        [YamlMember(Alias = "EpicMMO")]
         public bool EpicMMO { get; set; }
+        [YamlMember(Alias = "GlobalKeyReq")]
         public string GlobalKeyReq { get; set; }
+        [YamlMember(Alias = "ExhibitionName")]
         public string ExhibitionName { get; set; }
     }
 
