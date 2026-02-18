@@ -30,6 +30,7 @@ namespace ItemRequiresSkillLevel
 
         public static int GetAttribute(string attribute)
         {
+            if (!Player.m_localPlayer) return 0;
             string value = 0.ToString() ;
             Player.m_localPlayer.m_knownTexts.TryGetValue(pluginKey + "_LevelSystem_" + attribute, out value);
             return Convert.ToInt32(value);
