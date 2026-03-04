@@ -50,7 +50,7 @@ namespace ItemRequiresSkillLevel
                 bool blocked = requirement.Requirements.Where(x => x.BlockEquip).Any(x => !IsAble(x));
                 if (blocked)
                 {
-                    if ( ItemRequiresSkillLevel.ShowBlockMessages.Value)
+                    if ( ItemRequiresSkillLevel.ShowBlockMessages.Value && MessageHud.instance != null)
                         MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, ItemRequiresSkillLevel.cantequipmessage.Value);
                     __result = false;
                 }
@@ -84,7 +84,7 @@ namespace ItemRequiresSkillLevel
                     character.m_ammoItem = item;
                     return true;
                 }
-                if ( ItemRequiresSkillLevel.ShowBlockMessages.Value)
+                if ( ItemRequiresSkillLevel.ShowBlockMessages.Value && MessageHud.instance != null)
                     MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, ItemRequiresSkillLevel.cantUseAmmomessage.Value);
                 return false;
             }
@@ -103,7 +103,7 @@ namespace ItemRequiresSkillLevel
                 if (item.IsEquipable()) return true;
 
                 // Optionally: message to user
-                if (__instance == Player.m_localPlayer  && ItemRequiresSkillLevel.ShowBlockMessages.Value)
+                if (__instance == Player.m_localPlayer  && ItemRequiresSkillLevel.ShowBlockMessages.Value && MessageHud.instance != null)
                     MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, ItemRequiresSkillLevel.cantequipmessage.Value);                
 
                 return false;
@@ -149,7 +149,7 @@ namespace ItemRequiresSkillLevel
                 bool blockUse = requirement.Requirements.Where(x => x.BlockEquip).Any(x => !IsAble(x));
                 if (blockUse)
                 {
-                    if (ItemRequiresSkillLevel.ShowBlockMessages.Value)
+                    if (ItemRequiresSkillLevel.ShowBlockMessages.Value && MessageHud.instance != null)
                         MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, ItemRequiresSkillLevel.canteatmessage.Value);
                     __result = false;
                 }
@@ -179,6 +179,8 @@ namespace ItemRequiresSkillLevel
 
         public static bool IsAble(Requirement requirement)
         {
+            if (Player.m_localPlayer == null) return true;
+
             // EpicMMO attributes
             if (requirement.EpicMMO)
             {

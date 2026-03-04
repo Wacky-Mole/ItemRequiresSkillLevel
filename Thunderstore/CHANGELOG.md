@@ -10,3 +10,4 @@
 | 1.4.0   | Switched config to `WackyMole.ItemRequiresSkillLevel.yml` (still reads legacy `Detalhes.ItemRequiresSkillLevel.yml` if present).<br>Added `GlobalKeyReq` to requirements to gate items by global keys (recommended with World Advancement Progression or with private player raids enabled).<br>Added more blocked alerts for players. |
 | 1.4.1   | Bug fix |
 | 1.4.2   | Bug fix |
+| 1.4.3   | Bug fix for startup & epicloot |
