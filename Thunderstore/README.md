@@ -3,6 +3,11 @@
 Original mod by **Detalhes**: [https://thunderstore.io/c/valheim/p/Detalhes/ItemRequiresSkillLevel/](https://thunderstore.io/c/valheim/p/Detalhes/ItemRequiresSkillLevel/)
 Maintained by **WackyMole** with permission.
 
+
+### What's new in 1.4.4
+
+* **Multiple Config Files**: The mod now reads all YAML files in the config folder that start with `WackyMole.ItemRequiresSkillLevel`. This allows for better organization of requirements across different mods or item categories.
+
 ### What's new in 1.4.0
 
 * Config renamed to `WackyMole.ItemRequiresSkillLevel.yml` (still reads legacy `Detalhes.ItemRequiresSkillLevel.yml` if present).
