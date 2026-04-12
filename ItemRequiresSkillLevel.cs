@@ -17,7 +17,7 @@ namespace ItemRequiresSkillLevel
     [HarmonyPatch]
     public class ItemRequiresSkillLevel : BaseUnityPlugin
     {
-        public const string Version = "1.4.3";
+        public const string Version = "1.4.4";
         public const string PluginGUIDold = "Detalhes.ItemRequiresSkillLevel";
         public const string PluginGUID = "WackyMole.ItemRequiresSkillLevel";
         public const string PluginName = "ItemRequiresSkillLevel";
@@ -40,9 +40,7 @@ namespace ItemRequiresSkillLevel
         public static bool hasWAP = false;
 
         Harmony _harmony = new Harmony(PluginGUID);
-
-        internal static string ConfigFileName;          // active file name
-        internal static string ConfigPath;              // active file full path
+        
         internal static readonly string ConfigFileNameNew = PluginGUID + ".yml";
         internal static readonly string ConfigPathNew = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileNameNew;
         internal static readonly string ConfigFileNameOld = PluginGUIDold + ".yml";
@@ -50,38 +48,23 @@ namespace ItemRequiresSkillLevel
 
         public static string AllItemsConfigPath = Paths.ConfigPath + Path.DirectorySeparatorChar + PluginGUID + "ALLITEMS.yml";
 
-        private FileSystemWatcher _watcherNew;
-        private FileSystemWatcher _watcherOld;
+        private FileSystemWatcher _watcher;
 
         private void Awake()
         {
             hasWAP = IsWAPInstalled();
 
-            // Pick which file to use:
-            // If legacy Detalhes file exists -> use that.
-            // Else use (and if needed, create) WackyMole file.
-            if (File.Exists(ConfigPathOld))
-            {
-                ConfigFileName = ConfigFileNameOld;
-                ConfigPath = ConfigPathOld;
-            }
-            else
-            {
-                ConfigFileName = ConfigFileNameNew;
-                ConfigPath = ConfigPathNew;
-            }
-
-            // Ensure defaults exist if we're on the new path and nothing is present
+            // Ensure default exists if no WackyMole files or legacy file are present
             RequirementService.Init();
 
             // Harmony + sync setup
             _harmony.PatchAll();
             YamlData.ValueChanged += RequirementService.Load;
 
-            // Initial load from whichever path we chose
+            // Initial load of all matching YAML files
             AssignYamlFromActivePath();
 
-            // Watch BOTH possible files so a user can swap/migrate at runtime
+            // Watch for any .yml file in config folder for matching prefixes
             SetupWatcher();
 
             // ---- Config entries ----
@@ -103,41 +86,51 @@ namespace ItemRequiresSkillLevel
 
         private void AssignYamlFromActivePath()
         {
-            // Prefer old if present; else new.
-            string path = File.Exists(ConfigPathOld) ? ConfigPathOld : ConfigPathNew;
+            var yamlFiles = Directory.GetFiles(Paths.ConfigPath, "WackyMole.ItemRequiresSkillLevel*.yml");
+            var dict = new Dictionary<string, string>();
 
-            // Update active pointers so RequirementService.Init()/Load use the right one
-            ConfigPath = path;
-            ConfigFileName = Path.GetFileName(path);
+            foreach (var file in yamlFiles)
+            {
+                try
+                {
+                    dict[file] = File.ReadAllText(file);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogWarning($"Failed to read YAML file {file}: {ex.Message}");
+                }
+            }
+
+            // Also check for the legacy file if not already included in the prefix search
+            if (File.Exists(ConfigPathOld) && !dict.ContainsKey(ConfigPathOld))
+            {
+                try
+                {
+                    dict[ConfigPathOld] = File.ReadAllText(ConfigPathOld);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogWarning($"Failed to read legacy YAML file {ConfigPathOld}: {ex.Message}");
+                }
+            }
 
             // Push into the synced value
-            var dict = new[] { path }.ToDictionary(f => f, File.ReadAllText);
             YamlData.AssignLocalValue(dict);
         }
 
         private void SetupWatcher()
         {
-            // Watch NEW file
-            _watcherNew = new FileSystemWatcher(Paths.ConfigPath, ConfigFileNameNew)
+            // Watch for any .yml file changes in the config directory to handle multi-file updates
+            _watcher = new FileSystemWatcher(Paths.ConfigPath, "*.yml")
             {
                 IncludeSubdirectories = false,
                 SynchronizingObject = ThreadingHelper.SynchronizingObject,
                 EnableRaisingEvents = true
             };
-            _watcherNew.Changed += ReadFile;
-            _watcherNew.Created += ReadFile;
-            _watcherNew.Renamed += ReadFile;
-
-            // Watch OLD file
-            _watcherOld = new FileSystemWatcher(Paths.ConfigPath, ConfigFileNameOld)
-            {
-                IncludeSubdirectories = false,
-                SynchronizingObject = ThreadingHelper.SynchronizingObject,
-                EnableRaisingEvents = true
-            };
-            _watcherOld.Changed += ReadFile;
-            _watcherOld.Created += ReadFile;
-            _watcherOld.Renamed += ReadFile;
+            _watcher.Changed += ReadFile;
+            _watcher.Created += ReadFile;
+            _watcher.Renamed += ReadFile;
+            _watcher.Deleted += ReadFile;
         }
 
         private void ReadFile(object sender, FileSystemEventArgs e)

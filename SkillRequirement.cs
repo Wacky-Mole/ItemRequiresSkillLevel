@@ -3,8 +3,10 @@ using YamlDotNet.Serialization;
 using System.Linq;
 using System.IO;
 using System.Text;
+using System.Collections.Generic;
 using UnityEngine;
 using YamlDotNet.Serialization.NamingConventions;
+using BepInEx;
 
 namespace ItemRequiresSkillLevel
 {
@@ -67,7 +69,8 @@ namespace ItemRequiresSkillLevel
 
         public static void Init()
         {
-            if (!File.Exists(ItemRequiresSkillLevel.ConfigPath))
+            bool anyFileExists = Directory.GetFiles(Paths.ConfigPath, "WackyMole.ItemRequiresSkillLevel*.yml").Any() || File.Exists(ItemRequiresSkillLevel.ConfigPathOld);
+            if (!anyFileExists)
             {
                 List<SkillRequirement> initials = new();
                 initials.Add(new SkillRequirement
@@ -205,7 +208,7 @@ namespace ItemRequiresSkillLevel
 
                 var yaml = serializer.Serialize(initials);
 
-                using StreamWriter streamWriter = File.CreateText(ItemRequiresSkillLevel.ConfigPath);
+                using StreamWriter streamWriter = File.CreateText(ItemRequiresSkillLevel.ConfigPathNew);
                 streamWriter.Write(new StringBuilder()
                         .AppendLine(yaml));
                 streamWriter.Close();
