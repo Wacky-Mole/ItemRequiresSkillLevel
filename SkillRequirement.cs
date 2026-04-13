@@ -46,11 +46,23 @@ namespace ItemRequiresSkillLevel
             return list;
         }
 
-        private static List<SkillRequirement> ParseString(string yaml) => new DeserializerBuilder()
-            .WithNamingConvention(PascalCaseNamingConvention.Instance)
-            .IgnoreFields()
-            .Build()
-            .Deserialize<List<SkillRequirement>>(yaml);
+        private static List<SkillRequirement> ParseString(string yaml)
+        {
+            try
+            {
+                return new DeserializerBuilder()
+                    .WithNamingConvention(PascalCaseNamingConvention.Instance)
+                    .IgnoreUnmatchedProperties()
+                    .IgnoreFields()
+                    .Build()
+                    .Deserialize<List<SkillRequirement>>(yaml);
+            }
+            catch (System.Exception ex)
+            {
+                UnityEngine.Debug.LogWarning($"[ItemRequiresSkillLevel] YAML Parsing Error: {ex.Message}");
+                return new List<SkillRequirement>();
+            }
+        }
     }
 
     public class Requirement

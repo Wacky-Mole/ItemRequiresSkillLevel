@@ -11,4 +11,4 @@
 | 1.4.1   | Bug fix |
 | 1.4.2   | Bug fix |
 | 1.4.3   | Bug fix for startup & epicloot |
-| 1.4.4   | Can read multiple YAML files starting with `WackyMole.ItemRequiresSkillLevel`  </br> Bug fix for IsEquipable </br> Change how the mod interacts with EpicMMO slightly. </br> More defenseive with reading Yamls|
+| 1.4.4   | Can read multiple YAML files starting with `WackyMole.ItemRequiresSkillLevel`  </br> Bug fix for IsEquipable. </br> Changed how the mod interacts with EpicMMO slightly. </br> More defensive with reading Yamls|
