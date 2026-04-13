@@ -72,7 +72,6 @@ namespace ItemRequiresSkillLevel
             GenerateListWithAllEquipableItems = config("General", "GenerateListWithAllEquipableItems", false, "GenerateListWithAllEquipableItems");
             canEquipColor = config("General", "canEquipColor", "green", "canEquipColor");
             cantEquipColor = config("General", "cantEquipColor", "red", "cantEquipColor");
-            GenerateListWithAllEquipableItems = config("General", "GenerateListWithAllEquipableItems", false, "GenerateListWithAllEquipableItems");
             RequiresText = config("General", "RequiresText", "\nRequires <color={0}>{1} {2}</color>", "RequiresText");
             cantequipmessage = config("General", "CantEquitMessage", "You Can't Equip this!", "Message to display when a player can't equip and item.");
             canteatmessage = config("General", "CantConsumeMessage", "You Can't Consume this!", "Message to display when a player can't eat an item.");

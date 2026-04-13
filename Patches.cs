@@ -36,7 +36,7 @@ namespace ItemRequiresSkillLevel
             [HarmonyPostfix]
             private static void GetToolTip(ItemDrop.ItemData __instance, int stackOverride, ref string __result)
             {
-                if (!TryGetReqForItem(__instance, out var requirement)) return;
+                if (!TryGetReqForItem(__instance, out var requirement) || requirement.Requirements == null) return;
                 __result += GetTextEquip(requirement); // append equip gate info (incl. GlobalKeyReq line)
             }
 
@@ -44,7 +44,7 @@ namespace ItemRequiresSkillLevel
             [HarmonyPostfix]
             private static void IsEquipable(ItemDrop.ItemData __instance, ref bool __result)
             {
-                if (!TryGetReqForItem(__instance, out var requirement)) return;
+                if (!TryGetReqForItem(__instance, out var requirement) || requirement.Requirements == null) return;
 
                 // If any BlockEquip requirement fails IsAble => not equipable
                 bool blocked = requirement.Requirements.Where(x => x.BlockEquip).Any(x => !IsAble(x));
@@ -122,7 +122,7 @@ namespace ItemRequiresSkillLevel
                 if (selected.Recipe == null || selected.Recipe.m_item == null) return;
 
                 string prefabName = selected.Recipe.m_item.gameObject.name;
-                if (!TryGetReqForPrefabName(prefabName, out var requirement)) return;
+                if (!TryGetReqForPrefabName(prefabName, out var requirement) || requirement.Requirements == null) return;
 
                 string craftText = GetTextCraft(requirement); // includes key line + skill lines
                 __instance.m_recipeDecription.text += craftText;
@@ -142,7 +142,7 @@ namespace ItemRequiresSkillLevel
             [HarmonyPostfix]
             internal static void CanConsumeItem(ItemDrop.ItemData item, ref bool __result)
             {
-                if (!TryGetReqForItem(item, out var requirement)) return;
+                if (!TryGetReqForItem(item, out var requirement) || requirement.Requirements == null) return;
 
                 // vanilla checks already ran; if food is edible state fails there, keep vanilla outcome
                 // apply our BlockEquip rules for consumables (your schema uses BlockEquip for use)
@@ -186,7 +186,7 @@ namespace ItemRequiresSkillLevel
             {
                 int level = 0;
                 if (requirement.Skill == "Level") level = EpicMMOSystem_API.GetLevel();
-                else level = EpicMMOSystem_API.GetAttribute(requirement.Skill);
+                else if (!string.IsNullOrEmpty(requirement.Skill)) level = EpicMMOSystem_API.GetAttribute(requirement.Skill);
 
                 return level >= requirement.Level;
             }
@@ -199,6 +199,8 @@ namespace ItemRequiresSkillLevel
                     return true;
                 return false;
             }
+
+            if (string.IsNullOrEmpty(requirement.Skill)) return requirement.Level <= 0;
 
             // ValheimLevelSystem custom texts
             if (ValheimLevelSystemList.Contains(requirement.Skill))
