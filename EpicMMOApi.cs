@@ -31,9 +31,12 @@ namespace ItemRequiresSkillLevel
         public static int GetAttribute(string attribute)
         {
             if (!Player.m_localPlayer) return 0;
-            string value = 0.ToString() ;
-            Player.m_localPlayer.m_knownTexts.TryGetValue(pluginKey + "_LevelSystem_" + attribute, out value);
-            return Convert.ToInt32(value);
+            if (Player.m_localPlayer.m_knownTexts.TryGetValue(pluginKey + "_LevelSystem_" + attribute, out string value))
+            {
+                if (int.TryParse(value, out int result))
+                    return result;
+            }
+            return 0;
         }
 
         public static void AddExp(int value)
@@ -51,9 +54,15 @@ namespace ItemRequiresSkillLevel
                 return;
             }
 
+            Type actionsMO = Type.GetType("API.EMMOS_API, EpicMMOSystem");
+            if (actionsMO == null)
+            {
+                state = API_State.NotInstalled;
+                return;
+            }
+
             state = API_State.Ready;
 
-            Type actionsMO = Type.GetType("API.EMMOS_API, EpicMMOSystem");
             eGetLevel = actionsMO.GetMethod("GetLevel", BindingFlags.Public | BindingFlags.Static);
             eAddExp = actionsMO.GetMethod("AddExp", BindingFlags.Public | BindingFlags.Static);
             eGetAttribute = actionsMO.GetMethod("GetAttribute", BindingFlags.Public | BindingFlags.Static);

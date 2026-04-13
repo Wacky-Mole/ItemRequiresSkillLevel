@@ -24,14 +24,22 @@ namespace ItemRequiresSkillLevel
         public static List<SkillRequirement> Parse(string yaml)
         {
             List<SkillRequirement> list = ParseString(yaml);
+            if (list == null) return new List<SkillRequirement>();
+
             foreach (SkillRequirement skillRequirement in list)
             {
-                skillRequirement.StableHashCode = skillRequirement.PrefabName.GetStableHashCode();
-                foreach (var x in skillRequirement.Requirements)
+                if (skillRequirement.PrefabName != null)
                 {
-                    if (string.IsNullOrEmpty(x.ExhibitionName))
-                        x.ExhibitionName = string.IsNullOrEmpty(x.GlobalKeyReq) ? x.Skill : x.GlobalKeyReq;
-
+                    skillRequirement.StableHashCode = skillRequirement.PrefabName.GetStableHashCode();
+                }
+                
+                if (skillRequirement.Requirements != null)
+                {
+                    foreach (var x in skillRequirement.Requirements)
+                    {
+                        if (string.IsNullOrEmpty(x.ExhibitionName))
+                            x.ExhibitionName = string.IsNullOrEmpty(x.GlobalKeyReq) ? x.Skill : x.GlobalKeyReq;
+                    }
                 }
             }
 
