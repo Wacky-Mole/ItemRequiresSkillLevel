@@ -235,7 +235,21 @@ namespace ItemRequiresSkillLevel
             // If still null, assume not learned yet; treat missing as 0 (fail if Level>0)
             if (skillPair.Value is null) return requirement.Level <= 0;
 
-            return skillPair.Value.m_level >= requirement.Level;
+            return GetEffectiveVanillaSkillLevel(skillPair.Key, skillPair.Value) >= requirement.Level;
+        }
+
+        private static float GetEffectiveVanillaSkillLevel(Skills.SkillType skillType, Skills.Skill skill)
+        {
+            if (Player.m_localPlayer == null) return skill?.m_level ?? 0f;
+
+            try
+            {
+                return Player.m_localPlayer.GetSkills().GetSkillLevel(skillType);
+            }
+            catch
+            {
+                return skill?.m_level ?? 0f;
+            }
         }
 
         public static Skills.SkillType FromName(string englishName) => (Skills.SkillType)Math.Abs(englishName.GetStableHashCode());
