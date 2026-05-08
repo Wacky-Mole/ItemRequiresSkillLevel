@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -14,6 +14,10 @@
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
     <LangVersion>9</LangVersion>
+    <ValheimPluginsDir>C:\Program Files (x86)\Steam\steamapps\common\Valheim\BepInEx\plugins</ValheimPluginsDir>
+    <ThunderstoreDir>$(MSBuildProjectDirectory)\Thunderstore</ThunderstoreDir>
+    <ThunderstorePackageDir>$(ThunderstoreDir)\package</ThunderstorePackageDir>
+    <PluginVersionSourceFile>$(MSBuildProjectDirectory)\ItemRequiresSkillLevel.cs</PluginVersionSourceFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -126,5 +130,79 @@
     <None Include="Thunderstore\manifest.json" />
     <None Include="Thunderstore\README.md" />
   </ItemGroup>
+  <UsingTask TaskName="ZipDirectory" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <SourceDirectory ParameterType="System.String" Required="true" />
+      <DestinationFile ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System.IO.Compression" />
+      <Reference Include="System.IO.Compression.FileSystem" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.IO.Compression" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        if (File.Exists(DestinationFile))
+        {
+            File.Delete(DestinationFile);
+        }
+
+        ZipFile.CreateFromDirectory(SourceDirectory, DestinationFile, CompressionLevel.Optimal, false);
+      ]]></Code>
+    </Task>
+  </UsingTask>
+  <Target Name="PrepareThunderstoreRelease" AfterTargets="ILRepacker" Condition="'$(Configuration)' == 'Release'">
+    <PropertyGroup>
+      <ManifestPath>$(ThunderstoreDir)\manifest.json</ManifestPath>
+      <ManifestVersionPattern>&quot;version_number&quot;\s*:\s*&quot;[^&quot;]+&quot;</ManifestVersionPattern>
+    </PropertyGroup>
+    <ReadLinesFromFile File="$(PluginVersionSourceFile)">
+      <Output TaskParameter="Lines" ItemName="PluginVersionSourceLines" />
+    </ReadLinesFromFile>
+    <PropertyGroup>
+      <PluginVersionSourceText>@(PluginVersionSourceLines,'&#x0A;')</PluginVersionSourceText>
+      <PluginVersion>$([System.Text.RegularExpressions.Regex]::Match('$(PluginVersionSourceText)', 'public const string Version = &quot;([^&quot;]+)&quot;').Groups[1].Value)</PluginVersion>
+      <ManifestVersionReplacement>&quot;version_number&quot;: &quot;$(PluginVersion)&quot;</ManifestVersionReplacement>
+      <ThunderstorePackageName>WackyItemRequiresSkillLevel-$(PluginVersion).zip</ThunderstorePackageName>
+    </PropertyGroup>
+    <Message Text="Preparing release package $(PluginVersion)" Importance="high" />
+    <ReadLinesFromFile File="$(ManifestPath)">
+      <Output TaskParameter="Lines" ItemName="ManifestLines" />
+    </ReadLinesFromFile>
+    <PropertyGroup>
+      <ManifestContent>@(ManifestLines,'&#x0D;&#x0A;')</ManifestContent>
+      <UpdatedManifestContent>$([System.Text.RegularExpressions.Regex]::Replace('$(ManifestContent)', '$(ManifestVersionPattern)', '$(ManifestVersionReplacement)'))</UpdatedManifestContent>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(ManifestPath)" Lines="$(UpdatedManifestContent)" Overwrite="true" Encoding="UTF-8" />
+    <RemoveDir Directories="$(ThunderstorePackageDir)" Condition="Exists('$(ThunderstorePackageDir)')" />
+    <MakeDir Directories="$(ThunderstorePackageDir)" />
+    <MakeDir Directories="$(ValheimPluginsDir)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ValheimPluginsDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ThunderstoreDir)" SkipUnchangedFiles="true" />
+    <ItemGroup>
+      <ThunderstorePackageFiles Include="$(TargetPath)">
+        <PackageRelativePath>$(TargetFileName)</PackageRelativePath>
+      </ThunderstorePackageFiles>
+      <ThunderstorePackageFiles Include="$(ThunderstoreDir)\manifest.json">
+        <PackageRelativePath>manifest.json</PackageRelativePath>
+      </ThunderstorePackageFiles>
+      <ThunderstorePackageFiles Include="$(ThunderstoreDir)\README.md">
+        <PackageRelativePath>README.md</PackageRelativePath>
+      </ThunderstorePackageFiles>
+      <ThunderstorePackageFiles Include="$(ThunderstoreDir)\CHANGELOG.md">
+        <PackageRelativePath>CHANGELOG.md</PackageRelativePath>
+      </ThunderstorePackageFiles>
+      <ThunderstorePackageFiles Include="$(ThunderstoreDir)\icon.png">
+        <PackageRelativePath>icon.png</PackageRelativePath>
+      </ThunderstorePackageFiles>
+    </ItemGroup>
+    <Copy SourceFiles="@(ThunderstorePackageFiles)" DestinationFiles="@(ThunderstorePackageFiles->'$(ThunderstorePackageDir)\%(PackageRelativePath)')" SkipUnchangedFiles="true" />
+  </Target>
+  <Target Name="CreateThunderstoreZip" AfterTargets="PrepareThunderstoreRelease" Condition="'$(Configuration)' == 'Release'">
+    <PropertyGroup>
+      <ThunderstoreZipPath>$(ThunderstoreDir)\$(ThunderstorePackageName)</ThunderstoreZipPath>
+    </PropertyGroup>
+    <ZipDirectory SourceDirectory="$(ThunderstorePackageDir)" DestinationFile="$(ThunderstoreZipPath)" />
+    <Message Text="Created Thunderstore package: $(ThunderstoreZipPath)" Importance="high" />
+  </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
