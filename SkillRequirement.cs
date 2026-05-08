@@ -307,9 +307,9 @@ namespace ItemRequiresSkillLevel
                         {
                             Prefabs = new List<string>
                             {
-                                "HelmetBronze",
-                                "ArmorBronzeChest",
-                                "ArmorBronzeLegs"
+                                "ArmorIronChest",
+                                "ArmorIronLegs",
+                                "HelmetIron"
                             },
                             Requirements = new List<Requirement>
                             {
