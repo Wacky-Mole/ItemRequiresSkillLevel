@@ -13,3 +13,4 @@
 | 1.4.3   | Bug fix for startup & epicloot |
 | 1.4.4   | Can read multiple YAML files starting with `WackyMole.ItemRequiresSkillLevel`  </br> Bug fix for IsEquipable. </br> Changed how the mod interacts with EpicMMO slightly. </br> More defensive with reading Yamls|
 | 1.4.5   | Skill levels now use SET effects bonuses in the calculations.|
+| 1.4.6   | Added RequirementGroups to allow for multiple prefabs at once. Readme Examples, old way still works. |

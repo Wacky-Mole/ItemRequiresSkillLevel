@@ -6,7 +6,7 @@ Maintained by **WackyMole** with permission.
 
 ### What's new in 1.4.4
 
-* **Multiple Config Files**: The mod now reads all YAML files in the config folder that start with `WackyMole.ItemRequiresSkillLevel`. This allows for better organization of requirements across different mods or item categories.
+* **Multiple Config Files**: The mod now reads all YAML files in the config folder that start with `WackyMole.ItemRequiresSkillLevel` This allows for better organization of requirements across different mods or item categories.
 
 ### What's new in 1.4.0
 
@@ -50,164 +50,196 @@ Legacy Detalhes mod (still somewhat maintained):
 
 
 
-A Yml will be generated in the first execution.
+A YML will be generated on first launch.
 
+# Configuration formats
 
+The mod supports **two YAML formats**:
 
-# Example:
+1. **Legacy top-level list**
+2. **Document format** with `Requirements` and optional `RequirementGroups`
+
+Both formats are supported at the same time for backward compatibility.
+
+## Format 1: Legacy top-level list
+
+Use this if you want one entry per item, like older configs.
+
+### Example 1: Basic vanilla skill requirement
+
+```yaml
+- PrefabName: BronzeSword
+  Requirements:
+    - Skill: Swords
+      Level: 15
+      BlockCraft: true
+      BlockEquip: true
 ```
-- PrefabName: ArmorBronzeChest
-  Requirements:
-  - Skill: Level
-    Level: 10
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName:
-  - Skill: Strength
-    Level: 20
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName:
-- PrefabName: ArmorBronzeLegs
-  Requirements:
-  - Skill: Level
-    Level: 10
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName:
-  - Skill: Strength
-    Level: 20
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName:
-- PrefabName: HelmetBronze
-  Requirements:
-  - Skill: Level
-    Level: 10
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName:
-  - Skill: Strength
-    Level: 20
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName:
+
+### Example 2: EpicMMO requirement
+
+```yaml
 - PrefabName: ArmorIronChest
   Requirements:
-  - Skill: Level
-    Level: 20
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName: 
-  - Skill: Strength
-    Level: 40
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName:
-- PrefabName: ArmorIronLegs
-  Requirements:
-  - Skill: Level
-    Level: 20
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName: 
-  - Skill: Strength
-    Level: 40
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName: 
-- PrefabName: HelmetIron
-  Requirements:
-  - Skill: Level
-    Level: 20
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName: 
-  - Skill: Strength
-    Level: 40
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName:
-  - GlobalKeyReq: defeated_bonemass
-    BlockEquip: true
-  - GlobalKeyReq: defeated_gdking
-    BlockEquip: true
-- PrefabName: AxeBronze
-  Requirements:
-  - Skill: Level
-    Level: 10
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName: 
-- PrefabName: AtgeirBronze
-  Requirements:
-  - Skill: Level
-    Level: 10
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName: 
-- PrefabName: SwordBronze
-  Requirements:
-  - GlobalKeyReq: defeated_eikthyr
-    BlockEquip: true
+    - Skill: Level
+      Level: 20
+      BlockCraft: true
+      BlockEquip: true
+      EpicMMO: true
+      ExhibitionName: Player Level
+```
+
+### Example 3: Multiple requirements on one item
+
+```yaml
 - PrefabName: SwordIron
   Requirements:
-  - Skill: Level
-    Level: 30
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName: 
-  - Skill: Swords
-    Level: 20
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName:
-- PrefabName: AxeIron
-  Requirements:
-  - Skill: Level
-    Level: 30
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName: 
-  - Skill: Axes
-    Level: 20
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName:
-- PrefabName: AtgeirIron
-  Requirements:
-  - Skill: Level
-    Level: 30
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName: 
-  - Skill: Swords
-    Level: 20
-    BlockCraft: true
-    BlockEquip: true
-    EpicMMO: true
-    ExhibitionName:
-
+    - Skill: Level
+      Level: 30
+      BlockCraft: true
+      BlockEquip: true
+      EpicMMO: true
+      ExhibitionName: Player Level
+    - Skill: Swords
+      Level: 20
+      BlockCraft: true
+      BlockEquip: true
+      ExhibitionName: Swords
 ```
+
+### Example 4: Global key only
+
+```yaml
+- PrefabName: SwordBronze
+  Requirements:
+    - GlobalKeyReq: defeated_eikthyr
+      BlockEquip: true
+      ExhibitionName: Eikthyr Defeated
+```
+
+### Example 5: Mixed skill + key requirement
+
+```yaml
+- PrefabName: HelmetIron
+  Requirements:
+    - Skill: Level
+      Level: 20
+      BlockCraft: true
+      BlockEquip: true
+      EpicMMO: true
+      ExhibitionName: Player Level
+    - GlobalKeyReq: defeated_bonemass
+      BlockEquip: true
+      ExhibitionName: Bonemass Defeated
+```
+
+### Example 6: Consumable usage lock
+
+```yaml
+- PrefabName: SerpentStew
+  Requirements:
+    - GlobalKeyReq: defeated_serpent
+      BlockEquip: true
+      ExhibitionName: Serpent Killed
+```
+
+## Format 2: Document format
+
+Use this if you want a cleaner file layout or want to group multiple prefabs under the same requirement block.
+
+### Example 1: Normal per-item entries inside `Requirements`
+
+```yaml
+Requirements:
+  - PrefabName: ArmorBronzeChest
+    Requirements:
+      - Skill: Blocking
+        Level: 10
+        BlockEquip: true
+      - Skill: Swim
+        Level: 10
+        BlockCraft: true
+        BlockEquip: true
+
+  - PrefabName: SwordBronze
+    Requirements:
+      - GlobalKeyReq: defeated_eikthyr
+        BlockEquip: true
+        ExhibitionName: Eikthyr Defeated
+```
+
+### Example 2: One group applied to multiple items
+
+```yaml
+RequirementGroups:
+  - Prefabs:
+      - rae_OdinHorse_Helmet
+      - rae_OdinHorse_Chest
+      - rae_OdinHorse_Leggings
+    Requirements:
+      - Skill: Level
+        Level: 20
+        BlockCraft: true
+        BlockEquip: true
+        EpicMMO: true
+        ExhibitionName: Player Level
+```
+
+### Example 3: Group with multiple shared requirements
+
+```yaml
+RequirementGroups:
+  - Prefabs:
+      - ArmorBronzeChest
+      - ArmorBronzeLegs
+      - HelmetBronze
+    Requirements:
+      - Skill: Blocking
+        Level: 10
+        BlockEquip: true
+        ExhibitionName: Blocking
+      - Skill: Swim
+        Level: 10
+        BlockCraft: true
+        BlockEquip: true
+        ExhibitionName: Swim
+```
+
+### Example 4: Mixed document with both sections
+
+```yaml
+Requirements:
+  - PrefabName: SerpentStew
+    Requirements:
+      - GlobalKeyReq: defeated_serpent
+        BlockEquip: true
+        ExhibitionName: Serpent Killed
+
+RequirementGroups:
+  - Prefabs:
+      - ArmorIronChest
+      - ArmorIronLegs
+      - HelmetIron
+    Requirements:
+      - Skill: Level
+        Level: 20
+        BlockCraft: true
+        BlockEquip: true
+        EpicMMO: true
+        ExhibitionName: Player Level
+      - GlobalKeyReq: defeated_bonemass
+        BlockEquip: true
+        ExhibitionName: Bonemass Defeated
+```
+
+## Notes
+
+* `BlockCraft: true` prevents crafting.
+* `BlockEquip: true` prevents equipping or using the item.
+* Foods and potions use `BlockEquip: true` to block usage.
+* `EpicMMO: true` switches the requirement to EpicMMO/WackyEpicMMO stats.
+* `RequirementGroups` expands into normal per-item requirements internally.
+* Old configs using the legacy top-level list still work.
 
 # Sync
 Install in the server to sync config with clients.

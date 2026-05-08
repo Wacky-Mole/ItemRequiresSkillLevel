@@ -48,21 +48,93 @@ namespace ItemRequiresSkillLevel
 
         private static List<SkillRequirement> ParseString(string yaml)
         {
+            var deserializer = new DeserializerBuilder()
+                .WithNamingConvention(PascalCaseNamingConvention.Instance)
+                .IgnoreUnmatchedProperties()
+                .IgnoreFields()
+                .Build();
+
             try
             {
-                return new DeserializerBuilder()
-                    .WithNamingConvention(PascalCaseNamingConvention.Instance)
-                    .IgnoreUnmatchedProperties()
-                    .IgnoreFields()
-                    .Build()
-                    .Deserialize<List<SkillRequirement>>(yaml);
+                return deserializer.Deserialize<List<SkillRequirement>>(yaml) ?? new List<SkillRequirement>();
             }
-            catch (System.Exception ex)
+            catch
             {
-                UnityEngine.Debug.LogWarning($"[ItemRequiresSkillLevel] YAML Parsing Error: {ex.Message}");
-                return new List<SkillRequirement>();
+                try
+                {
+                    var document = deserializer.Deserialize<RequirementDocument>(yaml);
+                    return document?.ToSkillRequirements() ?? new List<SkillRequirement>();
+                }
+                catch (System.Exception ex)
+                {
+                    UnityEngine.Debug.LogWarning($"[ItemRequiresSkillLevel] YAML Parsing Error: {ex.Message}");
+                    return new List<SkillRequirement>();
+                }
             }
         }
+    }
+
+    public class RequirementDocument
+    {
+        [YamlMember(Alias = "Requirements")]
+        public List<SkillRequirement> Requirements { get; set; }
+
+        [YamlMember(Alias = "RequirementGroups")]
+        public List<RequirementGroup> RequirementGroups { get; set; }
+
+        public List<SkillRequirement> ToSkillRequirements()
+        {
+            List<SkillRequirement> list = Requirements != null
+                ? new List<SkillRequirement>(Requirements)
+                : new List<SkillRequirement>();
+
+            if (RequirementGroups == null) return list;
+
+            foreach (RequirementGroup group in RequirementGroups)
+            {
+                if (group?.Prefabs == null || group.Requirements == null) continue;
+
+                foreach (string prefab in group.Prefabs.Where(x => !string.IsNullOrWhiteSpace(x)))
+                {
+                    list.Add(new SkillRequirement
+                    {
+                        PrefabName = prefab,
+                        Requirements = group.Requirements.Select(CloneRequirement).ToList()
+                    });
+                }
+            }
+
+            return list;
+        }
+
+        private static Requirement CloneRequirement(Requirement requirement) => new Requirement
+        {
+            Skill = requirement.Skill,
+            Level = requirement.Level,
+            BlockCraft = requirement.BlockCraft,
+            BlockEquip = requirement.BlockEquip,
+            EpicMMO = requirement.EpicMMO,
+            GlobalKeyReq = requirement.GlobalKeyReq,
+            ExhibitionName = requirement.ExhibitionName
+        };
+    }
+
+    public class RequirementGroup
+    {
+        [YamlMember(Alias = "Prefabs")]
+        public List<string> Prefabs { get; set; }
+
+        [YamlMember(Alias = "Requirements")]
+        public List<Requirement> Requirements { get; set; }
+    }
+
+    public class RequirementSampleDocument
+    {
+        [YamlMember(Alias = "Requirements")]
+        public List<SkillRequirement> Requirements { get; set; }
+
+        [YamlMember(Alias = "RequirementGroups")]
+        public List<RequirementGroup> RequirementGroups { get; set; }
     }
 
     public class Requirement
@@ -226,7 +298,36 @@ namespace ItemRequiresSkillLevel
                 .WithNamingConvention(PascalCaseNamingConvention.Instance)
                 .Build();
 
-                var yaml = serializer.Serialize(initials);
+                var sample = new RequirementSampleDocument
+                {
+                    Requirements = initials,
+                    RequirementGroups = new List<RequirementGroup>
+                    {
+                        new RequirementGroup
+                        {
+                            Prefabs = new List<string>
+                            {
+                                "HelmetBronze",
+                                "ArmorBronzeChest",
+                                "ArmorBronzeLegs"
+                            },
+                            Requirements = new List<Requirement>
+                            {
+                                new Requirement
+                                {
+                                    Skill = "Level",
+                                    Level = 10,
+                                    BlockCraft = true,
+                                    BlockEquip = true,
+                                    EpicMMO = true,
+                                    ExhibitionName = "Player Level"
+                                }
+                            }
+                        }
+                    }
+                };
+
+                var yaml = serializer.Serialize(sample);
 
                 using StreamWriter streamWriter = File.CreateText(ItemRequiresSkillLevel.ConfigPathNew);
                 streamWriter.Write(new StringBuilder()
