@@ -1,9 +1,9 @@
 ﻿{
 "name":  "WackyItemRequiresSkillLevel",
-"version_number": "1.4.6",
+"version_number": "1.4.7",
 "website_url":  "https://github.com/Wacky-Mole/ItemRequiresSkillLevel",
 "description":  " Wacky Item Requires Skill Level allows you to set your items to require skills / WackyEpicMMO / VLS / Global Keys attributes to be equipped or crafted.",
 "dependencies":  [
-"denikson-BepInExPack_Valheim-5.4.2333"
+"denikson-BepInExPack_Valheim-5.4.2350"
 ]
 }

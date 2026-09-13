@@ -4,6 +4,15 @@ Original mod by **Detalhes**: [https://thunderstore.io/c/valheim/p/Detalhes/Item
 Maintained by **WackyMole** with permission.
 
 
+<div style="text-align: center;">
+  <a href="https://www.survivalservers.com/services/game_servers/valheim/?ref=WackyMole">
+    <img
+      src="https://www.wackymole.com/hosts/WackySurvivalBanner.png"
+      alt="Valheim Server Hosting - Survival Servers"
+      width="768"height="90" style="display: inline-block; max-width: 100%; height: auto;">
+  </a>
+</div>
+
 ### What's new in 1.4.4
 
 * **Multiple Config Files**: The mod now reads all YAML files in the config folder that start with `WackyMole.ItemRequiresSkillLevel` This allows for better organization of requirements across different mods or item categories.
